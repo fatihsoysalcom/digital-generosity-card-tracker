@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generosity Card Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            color: #0056b3;
+        }
+        .card-section {
+            margin-bottom: 25px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #e9f7ff;
+        }
+        textarea {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        button {
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #cardList {
+            list-style: none;
+            padding: 0;
+        }
+        #cardList li {
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 8px;
+            border-radius: 4px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        #cardList li.given {
+            border-left: 5px solid #28a745;
+        }
+        #cardList li.received {
+            border-left: 5px solid #ffc107;
+        }
+        .card-type {
+            font-weight: bold;
+            margin-right: 10px;
+            min-width: 70px;
+            text-align: center;
+        }
+        .card-description {
+            flex-grow: 1;
+        }
+        .card-date {
+            font-size: 0.9em;
+            color: #666;
+            margin-left: 10px;
+            min-width: 80px;
+            text-align: right;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cömertlik Kartı: Dijital Minnettarlık</h1>
+        <p>This tool helps you digitally track acts of generosity you've performed and gratitude you've received, embodying the "Generosity Card" concept.</p>
+
+        <div class="card-section">
+            <h2>Give a Generosity Card (Act of Kindness)</h2>
+            <textarea id="givenDescription" placeholder="Describe the act of kindness you performed..."></textarea>
+            <button onclick="addCard('given')">Record Generosity</button>
+        </div>
+
+        <div class="card-section">
+            <h2>Receive a Generosity Card (Gratitude)</h2>
+            <textarea id="receivedDescription" placeholder="Describe the gratitude you received..."></textarea>
+            <button onclick="addCard('received')">Record Gratitude</button>
+        </div>
+
+        <div class="card-section">
+            <h2>My Generosity Cards</h2>
+            <ul id="cardList"></ul>
+        </div>
+    </div>
+
+    <script>
+        const STORAGE_KEY = 'generosityCards';
+        let cards = [];
+
+        // Loads cards from local storage when the page loads
+        function loadCards() {
+            const storedCards = localStorage.getItem(STORAGE_KEY);
+            if (storedCards) {
+                cards = JSON.parse(storedCards);
+            }
+            renderCards();
+        }
+
+        // Saves the current cards array to local storage
+        function saveCards() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(cards));
+        }
+
+        // Adds a new card (either given or received) to the list
+        function addCard(type) {
+            const descriptionId = type === 'given' ? 'givenDescription' : 'receivedDescription';
+            const descriptionInput = document.getElementById(descriptionId);
+            const description = descriptionInput.value.trim();
+
+            if (description) {
+                // This is where the article's core concept of 'digital recording' is implemented.
+                // Each act of kindness or gratitude is captured as a structured digital 'card'.
+                cards.push({
+                    type: type, // 'given' for generosity, 'received' for gratitude
+                    description: description,
+                    date: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+                });
+                saveCards();
+                renderCards();
+                descriptionInput.value = ''; // Clear the input field
+            } else {
+                alert('Please enter a description.');
+            }
+        }
+
+        // Renders all cards to the display list
+        function renderCards() {
+            const cardList = document.getElementById('cardList');
+            cardList.innerHTML = ''; // Clear existing list
+
+            // This loop demonstrates the 'digital platform' aspect by displaying
+            // all recorded 'Generosity Cards' in a structured way.
+            cards.forEach(card => {
+                const listItem = document.createElement('li');
+                listItem.classList.add(card.type);
+                listItem.innerHTML = `
+                    <span class="card-type">${card.type === 'given' ? 'Given' : 'Received'}</span>
+                    <span class="card-description">${card.description}</span>
+                    <span class="card-date">${card.date}</span>
+                `;
+                cardList.appendChild(listItem);
+            });
+        }
+
+        // Initialize the app when the DOM is fully loaded
+        document.addEventListener('DOMContentLoaded', loadCards);
+    </script>
+</body>
+</html>
